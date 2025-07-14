@@ -2,90 +2,106 @@
 
 import React, { useRef, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { useGLTF, Environment } from '@react-three/drei'
+import { useGLTF, OrbitControls, Environment } from '@react-three/drei'
 import * as THREE from 'three'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
-// Registrar o plugin ScrollTrigger
 gsap.registerPlugin(ScrollTrigger)
 
 function DrillModel() {
-  const { scene } = useGLTF('/drill.glb')
+  const { scene } = useGLTF('/zxzxzx.glb')
   const modelRef = useRef<THREE.Group>(null)
 
-  // Valores fixos para produção
-  const modelPosition = { x: 6, y: -6, z: 0 }
-  const modelRotation = { x: 0, y: 0.5, z: 0 }
-  const modelScale = 60
+  // Estados iniciais e alvos das animações
+  const initial = {
+    position: [-1.15, -0.21, 1.24] as [number, number, number],
+    rotation: [0.06, -0.47, -0.02] as [number, number, number],
+    scale: [0.40, 0.40, 0.40] as [number, number, number],
+  }
+  const anim1 = {
+    position: [-2.39, -0.30, 1.24] as [number, number, number],
+    rotation: [-0.51, 2.96, 0.54] as [number, number, number],
+    scale: [0.47, 0.47, 0.47] as [number, number, number],
+  }
+  const anim2 = {
+    position: [-1.14, -0.05, 1.24] as [number, number, number],
+    rotation: [0.24, -0.02, 0.53] as [number, number, number],
+    scale: [0.29, 0.29, 0.29] as [number, number, number],
+  }
 
-    useEffect(() => {
+  useEffect(() => {
     if (!modelRef.current) return
 
-    // Limpar triggers existentes primeiro
-    ScrollTrigger.getAll().forEach(trigger => trigger.kill())
+    // Setar estado inicial
+    modelRef.current.position.set(
+      initial.position[0],
+      initial.position[1],
+      initial.position[2]
+    )
+    modelRef.current.rotation.set(
+      initial.rotation[0],
+      initial.rotation[1],
+      initial.rotation[2]
+    )
+    modelRef.current.scale.set(
+      initial.scale[0],
+      initial.scale[1],
+      initial.scale[2]
+    )
 
-    // Animação para segunda seção
-    gsap.to(modelRef.current.position, {
-      x: -5.9,
-      y: -6.0,
-      z: 2.2,
-      ease: "power2.inOut",
-      immediateRender: false,
-              scrollTrigger: {
-          trigger: "#second-section",
-          start: "top bottom",
-          end: "top top",
-          scrub: 3
-        }
+    // Animação 1: ScrollTrigger para SecondSection
+    const st1 = ScrollTrigger.create({
+      trigger: '#second-section',
+      start: 'top bottom',
+      end: 'top 5%',
+      scrub: true,
+      markers: true,
+      onUpdate: (self) => {
+        if (!modelRef.current) return
+        const p = initial.position.map((start, i) =>
+          start + (anim1.position[i] - start) * self.progress
+        )
+        const r = initial.rotation.map((start, i) =>
+          start + (anim1.rotation[i] - start) * self.progress
+        )
+        const s = initial.scale.map((start, i) =>
+          start + (anim1.scale[i] - start) * self.progress
+        )
+        modelRef.current.position.set(p[0], p[1], p[2])
+        modelRef.current.rotation.set(r[0], r[1], r[2])
+        modelRef.current.scale.set(s[0], s[1], s[2])
+      },
     })
 
-    gsap.to(modelRef.current.rotation, {
-      x: -0.3,
-      y: -2.3,
-      z: 0.3,
-      ease: "power2.inOut",
-      immediateRender: false,
-              scrollTrigger: {
-          trigger: "#second-section",
-          start: "top bottom",
-          end: "top top",
-          scrub: 3
-        }
+    // Animação 2: ScrollTrigger para ThirdSection
+    const st2 = ScrollTrigger.create({
+      trigger: '#third-section',
+      start: 'top bottom',
+      end: 'top top',
+      scrub: true,
+      markers: true,
+      onUpdate: (self) => {
+        if (!modelRef.current) return
+        // Começa do anim1, termina no anim2
+        const p = anim1.position.map((start, i) =>
+          start + (anim2.position[i] - start) * self.progress
+        )
+        const r = anim1.rotation.map((start, i) =>
+          start + (anim2.rotation[i] - start) * self.progress
+        )
+        const s = anim1.scale.map((start, i) =>
+          start + (anim2.scale[i] - start) * self.progress
+        )
+        modelRef.current.position.set(p[0], p[1], p[2])
+        modelRef.current.rotation.set(r[0], r[1], r[2])
+        modelRef.current.scale.set(s[0], s[1], s[2])
+      },
     })
 
-    // Animação para terceira seção
-    gsap.to(modelRef.current.position, {
-      x: 6,
-      y: -2,
-      z: -8.0,
-      ease: "power2.inOut",
-      immediateRender: false,
-              scrollTrigger: {
-          trigger: "#third-section",
-          start: "top bottom",
-          end: "top top",
-          scrub: 3
-        }
-    })
-
-    gsap.to(modelRef.current.rotation, {
-      x: 0.9,
-      y: 0.5,
-      z: 0.2,
-      ease: "power2.inOut",
-      immediateRender: false,
-              scrollTrigger: {
-          trigger: "#third-section",
-          start: "top bottom",
-          end: "top top",
-          scrub: 3
-        }
-    })
-
-    // Cleanup do ScrollTrigger
     return () => {
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill())
+      st1.kill()
+      st2.kill()
     }
   }, [])
 
@@ -93,37 +109,21 @@ function DrillModel() {
     <primitive 
       ref={modelRef}
       object={scene} 
-      scale={modelScale}
-      position={[modelPosition.x, modelPosition.y, modelPosition.z]}
-      rotation={[modelRotation.x, modelRotation.y, modelRotation.z]}
+      scale={initial.scale}
+      position={initial.position}
+      rotation={initial.rotation}
     />
   )
 }
 
 export function Drill3() {
+  const cameraPosition = [-4.10, -0.41, 2.81]
   return (
     <div className="fixed inset-0 w-screen h-screen z-10">
-      <Canvas
-        camera={{ position: [0, 0, 10], fov: 75 }}
-        shadows
-        gl={{ antialias: true }}
-      >
-        {/* Lighting */}
-        <ambientLight intensity={0.5} />
-        <directionalLight 
-          position={[5, 5, 5]} 
-          intensity={1} 
-          castShadow 
-          shadow-mapSize-width={2048}
-          shadow-mapSize-height={2048}
-        />
-        <pointLight position={[-5, 5, 5]} intensity={0.5} />
-        
-        {/* Model */}
+      <Canvas camera={{ position: cameraPosition, fov: 25 }}>
+         {/* Environment de estúdio para iluminação realista */}
+         <Environment preset="studio" />
         <DrillModel />
-        
-        {/* Environment */}
-        <Environment preset="studio" />
       </Canvas>
     </div>
   )

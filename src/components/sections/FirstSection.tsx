@@ -7,7 +7,7 @@ type Props = {}
 
 export function FirstSection({}: Props) {
   return (
-    <div className='leading-none'>
+    <div id="first-section" className='leading-none'>
       <div className='grid grid-cols-1 md:grid-cols-12 h-screen gap-x-2 sm:gap-x-3 md:gap-x-5 container-max justify-center w-full items-center px-4 sm:px-6 md:px-8 lg:px-12'>
         <div className='col-span-1 md:col-span-6 flex w-full justify-center md:justify-start'>
 
