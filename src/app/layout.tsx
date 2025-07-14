@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
 import "./globals.css";
+import { SmoothScroll } from "@/components/SmoothScroll";
 
 
 
@@ -24,6 +25,7 @@ export default function RootLayout({
       <body
         className={`${dmsans.variable}  antialiased`}
       >
+        <SmoothScroll />
         {children}
       </body>
     </html>

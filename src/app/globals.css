@@ -24,6 +24,7 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
 }
 
 /* Container centralizado com largura máxima de 1440px */
@@ -31,4 +32,26 @@ body {
   max-width: 1440px;
   margin: 0 auto;
   width: 100%;
+  padding: 0 1rem;
+}
+
+/* Responsividade para telas pequenas */
+@media (max-width: 640px) {
+  .container-max {
+    padding: 0 0.5rem;
+  }
+}
+
+/* Melhorias para mobile */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+}
+
+/* Ajustes para telas muito pequenas */
+@media (max-width: 480px) {
+  .container-max {
+    padding: 0 0.25rem;
+  }
 }
