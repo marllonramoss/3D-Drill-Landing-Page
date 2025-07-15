@@ -1,17 +1,46 @@
 "use client"
 
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Header } from '../Header'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 
 type Props = {}
 
 export function FirstSection({}: Props) {
+  const contentRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!contentRef.current) return
+    gsap.fromTo(
+      contentRef.current,
+      { opacity: 1, y: 0, x: 0 },
+      {
+        opacity: 0,
+        
+        x: -150,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '#first-section',
+          start: 'top top',
+          end: 'bottom 50%',
+          scrub: 1,
+          markers: true,
+          id: 'first-section-content',
+          
+        },
+      }
+    )
+  }, [])
+
   return (
     <div id="first-section" className='leading-none'>
-      <div className='grid grid-cols-1 md:grid-cols-12 h-screen gap-x-2 sm:gap-x-3 md:gap-x-5 container-max justify-center w-full items-center px-4 sm:px-6 md:px-8 lg:px-12'>
+      <div className=' grid grid-cols-1 md:grid-cols-12 h-screen gap-x-2 sm:gap-x-3 md:gap-x-5 container-max justify-center w-full items-center px-4 sm:px-6 md:px-8 lg:px-12'>
         <div className='col-span-1 md:col-span-6 flex w-full justify-center md:justify-start'>
-
-        <div className='flex flex-col gap-3 sm:gap-4 w-full max-w-md md:max-w-none text-center md:text-left'>
+    
+        <div id='first-section-content' ref={contentRef} className='flex flex-col gap-3 sm:gap-4 w-full max-w-md md:max-w-none text-center md:text-left'>
 
         <h1 className='text-4xl sm:text-6xl md:text-8xl lg:text-[120px] xl:text-[160px] font-bold leading-none'>
             <span>Perfect</span> <br/>
