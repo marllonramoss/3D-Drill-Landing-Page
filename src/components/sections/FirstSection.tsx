@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Header } from '../Header'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -11,6 +11,7 @@ type Props = {}
 
 export function FirstSection({}: Props) {
   const contentRef = useRef<HTMLDivElement>(null)
+  const [visible, setVisible] = useState(true)
 
   useEffect(() => {
     if (!contentRef.current) return
@@ -19,7 +20,6 @@ export function FirstSection({}: Props) {
       { opacity: 1, y: 0, x: 0 },
       {
         opacity: 0,
-        
         x: -150,
         ease: 'none',
         scrollTrigger: {
@@ -27,13 +27,20 @@ export function FirstSection({}: Props) {
           start: 'top top',
           end: 'bottom 50%',
           scrub: 1,
-          markers: true,
+          markers: false,
           id: 'first-section-content',
-          
         },
       }
     )
   }, [])
+
+  useEffect(() => {
+    const handler = () => setVisible(false)
+    window.addEventListener('hideSections', handler)
+    return () => window.removeEventListener('hideSections', handler)
+  }, [])
+
+  if (!visible) return null
 
   return (
     <div id="first-section" className='leading-none'>
